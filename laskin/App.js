@@ -1,41 +1,72 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, Button, Alert, TextInput, Image } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { StyleSheet, View, Text, Button, Alert, TextInput, Image, FlatList } from 'react-native';
 
 export default function App() {
 
-  const [eka, setTextEka] = useState("");
-  const [toka, setTextToka] = useState("");
+  const [eka, setEka] = useState("");
+  const [toka, setToka] = useState("");
+  const [result, setResult] = useState("");
+  const [text, setText] = useState("");
+  const [data, setData] = useState([]);
 
-  const buttonPressedPlus = () => {
-    Alert.alert("Result: " + (parseInt(eka) + parseInt(toka)));
-  };
+  const initialFocus = useRef(null);
 
-  const buttonPressedMinus = () => {
-    Alert.alert("Result: " + (parseInt(eka) - parseInt(toka)));
-  };
+  const calculate = operator => {
+    console.log(eka, toka, operator);
+    const [nro1, nro2] = [Number(eka), Number(toka)];
+    
+    switch (operator) {
+      case '+':
+        setResult(nro1 + nro2);
+        setData([...data, { key: nro1 + ' + ' + nro2 + ' = ' + (nro1+nro2)}]);
+        setText("");
+        break;
+      case '-':
+        setResult(nro1 - nro2);
+        setData([...data, { key: nro1 + ' - ' + nro2 + ' = ' + (nro1-nro2)}]);
+        setText("");
+        break;
+    }
+    setEka('');
+    setToka('');
+    initialFocus.current.focus();
+  }
 
   return (
     <View style={styles.container}>
 
+      <Text>Result: {result}</Text>
+
       <TextInput
         style={styles.input}
-        onChangeText={text => setTextEka(text)}
+        ref={initialFocus}
+        onChangeText={text => setEka(text)}
         value={eka}
-        keyboardType="numeric"
+        keyboardType="number-pad"
       />
+
       <TextInput
         style={styles.input}
-        onChangeText={text => setTextToka(text)}
+        onChangeText={text => setToka(text)}
         value={toka}
-        keyboardType="numeric"
+        keyboardType="number-pad"
       />
+
       <View style={styles.buttonStyle}>
-      <Button onPress={buttonPressedPlus} title="+" />
-      <Text>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Text>
-      <Button onPress={buttonPressedMinus} title="-" />
+        <Button onPress={() => calculate('+')} title="+" />
+        <Text>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Text>
+        <Button onPress={() => calculate('-')} title="-" />
       </View>
-      <StatusBar style="auto" />
+
+      <FlatList style={styles.list}
+        data={data}
+        renderItem={({item}) =>
+          <Text>{item.key}</Text>
+        }
+        keyExtractor={(item, index) => index.toString()}
+      />
+
     </View>
   );
 }
@@ -43,7 +74,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -56,5 +86,9 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {
     flexDirection: 'row',
+  },
+  list: {
+    maxHeight: '85%',
+    minHeight: '0%',
   }
 });
