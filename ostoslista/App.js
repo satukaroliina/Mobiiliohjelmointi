@@ -14,7 +14,7 @@ export default function App() {
   }
 
   const clearList = (data) => {
-    data.length = 0;
+    setData([]);
     Keyboard.dismiss();
   }
 
