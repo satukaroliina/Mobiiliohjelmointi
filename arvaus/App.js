@@ -1,31 +1,34 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Button, Alert, TextInput, Image } from 'react-native';
+import { StyleSheet, View, Text, Button, Alert, TextInput } from 'react-native';
+
+var random = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
+var laskuri = 0;
 
 export default function App() {
-
   const [arvaus, setText] = useState("");
-  var laskuri = 0;
+  const [ilmo, setIlmo] = useState("Guess a number between 1-100");
 
   const buttonPressed = () => {
-    var random = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
+    console.log(random);
+    console.log(arvaus);
     if (arvaus < random) {
       laskuri++;
-      Alert.alert("Your guess " + arvaus + " is too low.");
+      setIlmo("Your guess " + arvaus + " is too low.");
     }
     if (arvaus > random) {
       laskuri++;
-      Alert.alert("Your guess " + arvaus + " is too high.");
+      setIlmo("Your guess " + arvaus + " is too high.");
     }
-    if (arvaus === random) {
+    if (arvaus == random) {
       laskuri++;
-      Alert.alert("You guessed the number in " + laskuri + " guesses.");
+      setIlmo("You guessed the number in " + laskuri + " guesses.");
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text>Guess a number between 1-100</Text>
+      <Text>{ilmo}</Text>
       <TextInput
         style={styles.input}
         onChangeText={text => setText(text)}
